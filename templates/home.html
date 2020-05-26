@@ -7,7 +7,10 @@
 <div class="container">
   <div class="row">
     <div class="col-sm">
-      <a href="/on/red" class="btn btn-primary">Allumer la LED Rouge</a>
+      <a href="/on/red" class="btn btn-danger">Allumer la LED Rouge</a>
+    </div>
+    <div class="col-sm">
+      <a href="/blink/red" class="btn btn-danger">Faire clignoter la LED Rouge</a>
     </div>
     <div class="col-sm">
     </div>
@@ -20,11 +23,43 @@
       <a href="/on/blue" class="btn btn-primary">Allumer la LED Bleue</a>
     </div>
     <div class="col-sm">
+      <a href="/blink/blue" class="btn btn-primary">Faire clignoter la LED Bleue</a>
+    </div>
+    <div class="col-sm">
     </div>
     <div class="col-sm">
 	<a href="/off/blue" class="btn btn-secondary">Eteindre la LED Bleue</a>
     </div>
   </div>
+</div>
+  <form action="/blink" method="POST">
+    <div class="form-group row">
+      <label for="color" class="col-4 col-form-label">Choisir la Led</label> 
+      <div class="col-8">
+        <select id="color" name="color" class="custom-select">
+          <option value="red">Rouge</option>
+          <option value="blue">Bleue</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="numBlink" class="col-4 col-form-label">Nombre de clignotement</label> 
+      <div class="col-8">
+        <input id="numBlink" name="numBlink" type="text" class="form-control">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="sleepTime" class="col-4 col-form-label">Intervalle de clignotement</label> 
+      <div class="col-8">
+        <input id="sleepTime" name="sleepTime" type="text" class="form-control">
+      </div>
+    </div> 
+    <div class="form-group row">
+      <div class="offset-4 col-8">
+        <button name="submit" type="submit" class="btn btn-primary">Faire clignoter</button>
+      </div>
+    </div>
+  </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

@@ -4,6 +4,7 @@ import time
 
 class Led:
     def __init__(self, numGPIO):
+        self.shouldCancel = False
         # constructeur pour instancier notre objet Led
         # création d'une variable d'instance "Numéro de GPIO"
         self.numGPIO = numGPIO
@@ -22,9 +23,13 @@ class Led:
         # on dit à la broche d'arrêter d'envoyer du courant
         GPIO.output(self.numGPIO, GPIO.LOW)
 
+    def cancel(self):
+        self.shouldCancel = True
+
     def blink(self, numBlink, sleepTime):
         i = 0
-        while i < numBlink:
+        self.shouldCancel = False
+        while i < numBlink and not self.shouldCancel:
             self.on()
             time.sleep(sleepTime)
             self.off()
