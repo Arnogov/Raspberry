@@ -13,6 +13,9 @@
   <div class="row">
     La température est de <span id="temperature">{{ temp }}</span>°C
   </div>
+  <div class="row" id="light">
+
+  </div>
   <div class="row">
     <div class="col-sm">
       <a href="/on/red" class="btn btn-danger">Allumer la LED Rouge</a>
@@ -26,13 +29,13 @@
   </div>
   <div class="row">
     <div class="col-sm">
-      <a href="/on/green" class="btn btn-primary">Allumer la LED Bleue</a>
+      <a href="/on/blue" class="btn btn-primary">Allumer la LED Bleue</a>
     </div>
     <div class="col-sm">
-      <a href="/blink/green" class="btn btn-primary">Faire clignoter la LED Bleue</a>
+      <a href="/blink/blue" class="btn btn-primary">Faire clignoter la LED Bleue</a>
     </div>
     <div class="col-sm">
-	<a href="/off/green" class="btn btn-secondary">Eteindre la LED Bleue</a>
+	<a href="/off/blue" class="btn btn-secondary">Eteindre la LED Bleue</a>
     </div>
   </div>
   <form action="/blink" method="POST">
@@ -41,7 +44,7 @@
       <div class="col-8">
         <select id="color" name="color" class="custom-select">
           <option value="red">Rouge</option>
-          <option value="green">Bleue</option>
+          <option value="blue">Bleue</option>
         </select>
       </div>
     </div>
@@ -72,6 +75,9 @@
     $.get('/temp', function(result){
       console.log('Got temp : '+result);
       $('#temperature').text(result);
+    })
+    $.get('/light', function(data) {
+      $('#light').text(data);
     })
   }, 1000)
 </script>
