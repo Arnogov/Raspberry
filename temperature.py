@@ -42,19 +42,3 @@ class TemperatureSensor:
             temp_c = float(temp_string) / 1000.0
             return temp_c
         
-
-tempSensor = TemperatureSensor('28-01192fa66041')
-redLed = Led(18)
-blueLed = Led(24)
-
-while True:
-    temp = tempSensor.read_temp()
-    if temp > 28:
-        redLed.on()
-        blueLed.off()
-        print("Chaud : "+str(temp))
-    else:
-        redLed.off()
-        blueLed.on()
-        print("Froid : "+str(temp))
-    time.sleep(1)
