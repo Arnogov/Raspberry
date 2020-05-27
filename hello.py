@@ -8,8 +8,8 @@ app = Flask(__name__)
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-redLed = Led(14)
-blueLed = Led(16)
+redLed = Led(18)
+blueLed = Led(24)
 
 @app.route('/')
 def home():
