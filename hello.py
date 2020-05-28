@@ -19,12 +19,12 @@ lightSensor = LightSensor(27)
 
 @app.route('/')
 def home():
-    temp = tempSensor.read_temp()
-    return render_template('home.html', temp=temp)
+   temp = 0
+   return render_template('home.html', temp=temp)
 
 @app.route('/temp')
 def temp():
-    temp = tempSensor.read_temp()
+    temp = 0
     return str(temp)
 
 @app.route('/light')
