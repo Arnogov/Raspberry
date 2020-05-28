@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 from led import Led
 import time
+from threading import Thread
 
 # Initialisation de notre GPIO 17 pour recevoir un signal
 # Contrairement à nos LEDs avec lesquelles on envoyait un signal
@@ -13,12 +14,13 @@ class MovementSensor:
         GPIO.setup(self.broche, GPIO.IN)        
         self.detectFunction = detectFunction
         self.readyFunction = readyFunction
+        self.running = False
 
     def detect(self):
         currentstate = 0
         previousstate = 0
         # Boucle infini jusqu'à CTRL-C
-        while True:
+        while self.running:
             # Lecture du capteur
             currentstate = GPIO.input(self.broche)
                 # Si le capteur est déclenché
@@ -35,19 +37,11 @@ class MovementSensor:
             # On attends 10ms
             time.sleep(0.01)
 
+    def startDetection(self):
+        self.running = True
+        thread = Thread(target=self.detect)
+        thread.start()
+        return thread
 
-redLed = Led(18)
-blueLed = Led(24)
-
-def detect():
-    redLed.on()
-    blueLed.off()
-    print("Mouvement détecté")
-
-def ready():
-    redLed.off()
-    blueLed.on()
-    print("Prêt")
-
-movement = MovementSensor(17, detect, ready)
-movement.detect()
+    def stopDetection(self):
+        self.running = False
