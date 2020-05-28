@@ -40,9 +40,3 @@ class Buzzer:
         self.on()
         time.sleep(beepTime)
         self.off()
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-
-buzzer = Buzzer(22)
-buzzer.beep(0.5)
