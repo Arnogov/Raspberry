@@ -5,6 +5,7 @@ from buzzer import Buzzer
 from temperature import TemperatureSensor
 from light import LightSensor
 from movement import MovementSensor
+from morse import convertStrToMorse
 import RPi.GPIO as GPIO
 from threading import Thread
 app = Flask(__name__)
@@ -39,12 +40,18 @@ def light():
     else:
         return 'Il fait nuit'
 
-
 @app.route('/beep')
 def beep():
     buzzer.beep(0.5)
     return redirect(url_for('home'))
 
+@app.route('/morse', methods=['POST'])
+def morse():
+    code = request.form['code']
+    text = convertStrToMorse(code)
+    thread = Thread(target=buzzer.morse, args=(text, ))
+    thread.start()
+    return redirect(url_for('home'))
 
 @app.route('/on/<color>')
 def on(color):
