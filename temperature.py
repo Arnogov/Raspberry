@@ -1,66 +1,53 @@
-import RPi.GPIO as GPIO
-from led import Led
+# Imports
+import os
+import glob
 import time
-from threading import Thread
+from led import Led
+import RPi.GPIO as GPIO
 
-# Initialisation de notre GPIO 17 pour recevoir un signal
-# Contrairement à nos LEDs avec lesquelles on envoyait un signal
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+# Intialisation des broches
+os.system('modprobe w1-gpio')  # Allume le module 1wire
+os.system('modprobe w1-therm')  # Allume le module Temperature
 
-class MovementSensor:
-    def __init__(self, broche, detectFunction = None, readyFunction = None):
-        self.broche = broche
-        GPIO.setup(self.broche, GPIO.IN)        
-        self.detectFunction = detectFunction
-        self.readyFunction = readyFunction
-        self.running = False
+class TemperatureSensor:
 
-    def detect(self):
-        currentstate = 0
-        previousstate = 0
-        # Boucle infini jusqu'à CTRL-C
-        while self.running:
-            # Lecture du capteur
-            currentstate = GPIO.input(self.broche)
-                # Si le capteur est déclenché
-            if currentstate == 1 and previousstate == 0:
-                if not (self.detectFunction is None):
-                    self.detectFunction()
-                # En enregistrer l'état
-                previousstate = 1
-            # Si le capteur est s'est stabilisé
-            elif currentstate == 0 and previousstate == 1:
-                if not (self.readyFunction is None):
-                    self.readyFunction()
-                previousstate = 0
-            # On attends 10ms
-            time.sleep(0.01)
+    def __init__(self, sensor_name):
+        self.online = True
+        # Chemin du fichier contenant la température (remplacer par votre valeur trouvée précédemment)
+        self.device_file = '/sys/bus/w1/devices/'+ sensor_name +'/w1_slave'
 
-    def startDetection(self):
-        self.running = True
-        thread = Thread(target=self.detect)
-        thread.start()
-        return thread
-
-    def stopDetection(self):
-        self.running = False
-
-
-redLed = Led(18)
-blueLed = Led(24)
-
-def detect():
-    redLed.on()
-    blueLed.off()
-    print("Mouvement détecté")
-
-def ready():
-    redLed.off()
-    blueLed.on()
-    print("Prêt")
-
-movement = MovementSensor(17, detect, ready)
-movement.startDetection()
-time.sleep(2)
-movement.stopDetection()
+    # Une fonction qui lit dans le fichier température
+    def read_temp_raw(self):
+        try:
+            f = open(self.device_file, 'r')  # Ouvre le fichier
+            lines = f.readlines() # Returns the text
+            f.close()
+            self.online = True
+            return lines
+        except:
+            self.online = False
+            return ['', '']
+        
+    # Lis la temperature 
+    def read_temp(self):
+        lines = self.read_temp_raw()  # Lit le fichier de température
+        if not self.online:
+            return 0
+        # Tant que la première ligne ne vaut pas 'YES', on attend 0,2s
+        # On relis ensuite le fichier
+        i = 0
+        while lines[0].strip()[-3:] != 'YES' and i < 5:
+            time.sleep(0.2)
+            lines = self.read_temp_raw()
+            i += 1
+        
+        # On cherche le '=' dans la seconde ligne du fichier
+        equals_pos = lines[1].find('t=')
+        # Si le '=' est trouvé, on converti ce qu'il y a après le '=' en degrées celcius
+        if equals_pos != -1:
+            temp_string = lines[1][equals_pos+2:]
+            temp_c = float(temp_string) / 1000.0
+            return temp_c
+        else:
+            return 0
+        
